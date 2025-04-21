@@ -44,7 +44,9 @@ pipeline {
 
     post {
         always {
-            junit 'user-service/report.xml'
+            node {
+                junit 'report.xml'  // <- move this inside a node block
+            }
         }
     }
 }

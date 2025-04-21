@@ -44,8 +44,9 @@ pipeline {
 
     post {
         always {
-            node {
-                junit 'report.xml'  // <- move this inside a node block
+            // ✅ wrap in steps to provide the correct context
+            steps {
+                junit 'report.xml'
             }
         }
     }

@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "userservice"
+version = "1.0.0"
+description = "Simple user microservice"
+authors = ["Sanju <you@example.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+
+[tool.poetry.dev-dependencies]
+pytest = "^7.2.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

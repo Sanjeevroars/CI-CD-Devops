@@ -1,0 +1,50 @@
+pipeline {
+    agent any
+
+    environment {
+        PYTHONPATH = "${WORKSPACE}"
+        ART_USER = credentials('artifactory-username') // Add this in Jenkins
+        ART_PASS = credentials('artifactory-password')
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'develop', url: 'https://github.com/Sanjeevroars/CI-CD-Devops.git'
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                sh 'pip install -r user-service/requirements.txt || poetry install'
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                sh 'cd user-service && pytest --junitxml=report.xml'
+            }
+        }
+
+        stage('Build Package') {
+            steps {
+                sh 'cd user-service && python setup.py sdist bdist_wheel'
+            }
+        }
+
+        stage('Publish to Artifactory') {
+            steps {
+                sh '''
+                    curl -u$ART_USER:$ART_PASS -T user-service/dist/*.whl \
+                    "https://<your-org>.jfrog.io/artifactory/python-local/"
+                '''
+            }
+        }
+    }
+
+    post {
+        always {
+            junit 'user-service/report.xml'
+        }
+    }
+}

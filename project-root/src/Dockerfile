@@ -1,20 +1,14 @@
-# Use official Python image from Docker Hub
-FROM python:3.9-slim
+# Use an official openjdk runtime as a parent image
+FROM openjdk:17-jdk-slim
 
-# Set working directory in the container
+# Set the working directory in the container
 WORKDIR /app
 
-# Copy requirements.txt
-COPY requirements.txt .
+# Copy the Maven build artifact (JAR file) into the container
+COPY target/your-app.jar /app/your-app.jar
 
-# Install dependencies
-RUN pip install -r requirements.txt
+# Run the JAR file
+CMD ["java", "-jar", "your-app.jar"]
 
-# Copy the rest of the application
-COPY . .
-
-# Expose the port your app will run on
-EXPOSE 5000
-
-# Command to run the app
-CMD ["python", "app.py"]
+# Expose the port that your application listens on
+EXPOSE 8080

@@ -34,17 +34,20 @@ pipeline {
 
         stage('Publish to Artifactory') {
             steps {
-                sh '''
-                    curl -u$ART_USER:$ART_PASS -T user-service/dist/*.whl \
-                    "https://<your-org>.jfrog.io/artifactory/python-local/"
-                '''
+                withCredentials([usernamePassword(credentialsId: 'artifactory-credentials', usernameVariable: 'ART_USER', passwordVariable: 'ART_PASS')]) {
+                    sh 'curl -u$ART_USER:$ART_PASS -T dist/*.whl "https://trial72qis4.jfrog.io/artifactory/python-local/"'
+                }
             }
         }
+
     }
 
     post {
         always {
-            junit 'user-service/report.xml'
+            // ✅ wrap in steps to provide the correct context
+            steps {
+                junit 'report.xml'
+            }
         }
     }
 }
